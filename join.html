@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover">
+<meta name="theme-color" content="#0a0a0f" media="(prefers-color-scheme:dark)">
+<meta name="theme-color" content="#f7f5f2" media="(prefers-color-scheme:light)">
+<title>Join the Arena — BRAWL</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;600;700;800&family=Fragment+Mono:wght@400;500&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+<style>
+  .join-layout{display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:start;margin-top:20px}
+  @media(max-width:800px){.join-layout{grid-template-columns:1fr}}
+  .join-form-box{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:clamp(24px,4vw,40px)}
+  .join-form-box h2{font-size:clamp(22px,4vw,28px);font-weight:800;margin-bottom:8px;letter-spacing:-0.5px}
+  .join-form-box p.desc{font-size:14px;color:var(--text-dim);margin-bottom:28px;line-height:1.5}
+  .form-success{display:none;padding:24px;border-radius:12px;background:var(--defend-dim);border:1px solid var(--defend);text-align:center}
+  .form-success.show{display:block;animation:fadeUp 0.5s ease-out}
+  .form-success__title{font-size:22px;font-weight:800;color:var(--defend);margin-bottom:8px}
+  .form-success__desc{font-size:14px;color:var(--text-dim)}
+  .perks-list{list-style:none;padding:0;margin:0}
+  .perks-list li{padding:16px 0;border-bottom:1px solid var(--border);display:flex;gap:16px;align-items:flex-start}
+  .perks-list li:last-child{border-bottom:none}
+  .perk-icon{width:40px;height:40px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-family:var(--font-mono);font-size:16px;font-weight:800;flex-shrink:0}
+  .perk-icon--1{background:var(--attack-dim);color:var(--attack)}
+  .perk-icon--2{background:var(--gold-dim);color:var(--gold)}
+  .perk-icon--3{background:var(--defend-dim);color:var(--defend)}
+  .perk-title{font-weight:700;font-size:15px;margin-bottom:4px}
+  .perk-desc{font-size:13px;color:var(--text-dim);line-height:1.5}
+  .countdown-box{text-align:center;padding:24px;background:var(--surface);border:1px solid var(--border);border-radius:12px;margin-top:24px}
+  .countdown-box__label{font-family:var(--font-mono);font-size:11px;text-transform:uppercase;letter-spacing:2px;color:var(--text-mute);margin-bottom:12px}
+  .countdown-box__time{font-family:var(--font-mono);font-size:clamp(28px,6vw,40px);font-weight:800;color:var(--gold);letter-spacing:2px}
+</style>
+</head>
+<body>
+<nav>
+  <a href="index.html" class="nav-logo">BRAWL</a>
+  <ul class="nav-links" id="navLinks">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="arena.html">Arena</a></li>
+    <li><a href="leaderboard.html">Leaderboard</a></li>
+    <li><a href="play.html">How to Play</a></li>
+    <li><a href="about.html">About</a></li>
+  </ul>
+  <a href="join.html" class="nav-cta">Enter the Arena</a>
+  <button class="nav-toggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false"><span></span><span></span><span></span></button>
+</nav>
+
+<div class="page-header">
+  <h1>Join the Arena</h1>
+  <p>Sign up for early access. The first 100 fighters from each campus get a founding member badge and 200 bonus clout.</p>
+</div>
+
+<section>
+  <div class="join-layout">
+    <div class="join-form-box reveal">
+      <div id="formContent">
+        <h2>Claim your fighter profile.</h2>
+        <p class="desc">Enter your details. We'll notify you when Brawl launches on your campus.</p>
+
+        <form id="joinForm" onsubmit="return handleSubmit(event)">
+          <div class="form-group">
+            <label class="form-label" for="name">Full Name</label>
+            <input class="form-input" type="text" id="name" name="name" placeholder="Arjun Mehta" required>
+            <div class="form-error" id="error-name">Please enter your name.</div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="email">Campus Email</label>
+            <input class="form-input" type="email" id="email" name="email" placeholder="yourname@campus.edu" required>
+            <div class="form-hint">Must be a valid campus email address.</div>
+            <div class="form-error" id="error-email">Please enter a valid email address.</div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="handle">Fighter Handle</label>
+            <input class="form-input" type="text" id="handle" name="handle" placeholder="@arjun.attacks" required>
+            <div class="form-hint">This is your public arena name. Make it memorable.</div>
+            <div class="form-error" id="error-handle">Handle must be 3-20 characters, letters and dots only.</div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="campus">Campus</label>
+            <select class="form-select" id="campus" name="campus" required>
+              <option value="">Select your campus</option>
+              <option value="iitb">IIT Bombay</option>
+              <option value="iitd">IIT Delhi</option>
+              <option value="iitm">IIT Madras</option>
+              <option value="iitk">IIT Kanpur</option>
+              <option value="iitkgp">IIT Kharagpur</option>
+              <option value="bits">BITS Pilani</option>
+              <option value="nitk">NIT Karnataka</option>
+              <option value="iiitb">IIIT Bangalore</option>
+              <option value="vit">VIT Vellore</option>
+              <option value="dtu">DTU Delhi</option>
+              <option value="other">Other (request campus)</option>
+            </select>
+            <div class="form-error" id="error-campus">Please select your campus.</div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="role">Preferred Role</label>
+            <select class="form-select" id="role" name="role">
+              <option value="any">Either &mdash; I can argue both sides</option>
+              <option value="attacker">Attacker &mdash; I dismantle arguments</option>
+              <option value="defender">Defender &mdash; I hold the line</option>
+            </select>
+          </div>
+
+          <button type="submit" class="btn btn-primary" style="width:100%;margin-top:8px">Claim My Spot</button>
+        </form>
+      </div>
+
+      <div class="form-success" id="successBox">
+        <div class="form-success__title">You're in.</div>
+        <div class="form-success__desc" id="successDesc">Your fighter profile is queued. We'll email you when Brawl launches on your campus. See you at 9 PM.</div>
+      </div>
+    </div>
+
+    <div class="reveal">
+      <div class="section-label">Why Join Early</div>
+      <h2 class="section-title" style="font-size:clamp(24px,5vw,36px)">Founding member perks.</h2>
+
+      <ul class="perks-list">
+        <li>
+          <div class="perk-icon perk-icon--1">+200</div>
+          <div>
+            <div class="perk-title">200 bonus clout</div>
+            <div class="perk-desc">Start above the base 1,000. Founding members begin at 1,200 &mdash; a head start that early adopters deserve.</div>
+          </div>
+        </li>
+        <li>
+          <div class="perk-icon perk-icon--2">FM</div>
+          <div>
+            <div class="perk-title">Founding Member badge</div>
+            <div class="perk-desc">A permanent badge on your profile. It can't be earned later. It says: I was here when it started.</div>
+          </div>
+        </li>
+        <li>
+          <div class="perk-icon perk-icon--3">P1</div>
+          <div>
+            <div class="perk-title">Priority queue</div>
+            <div class="perk-desc">Founding members get first access to nightly Brawl slots before the general queue opens.</div>
+          </div>
+        </li>
+        <li>
+          <div class="perk-icon perk-icon--1">SH</div>
+          <div>
+            <div class="perk-title">Shape the product</div>
+            <div class="perk-desc">Founding members vote on new features, modes, and prompt categories. Your voice literally shapes the arena.</div>
+          </div>
+        </li>
+      </ul>
+
+      <div class="countdown-box">
+        <div class="countdown-box__label">Next Brawl In</div>
+        <div class="countdown-box__time countdown">04:32:18</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-grid">
+    <div><div class="footer-brand">BRAWL</div><p class="footer-tag">Speak your mind. Defend the rest.</p></div>
+    <div class="footer-col"><h4>Platform</h4><a href="arena.html">Arena</a><a href="leaderboard.html">Leaderboard</a><a href="play.html">How to Play</a></div>
+    <div class="footer-col"><h4>Company</h4><a href="about.html">About</a><a href="join.html">Join</a></div>
+    <div class="footer-col"><h4>Connect</h4><a href="#">Instagram</a><a href="#">Twitter</a></div>
+  </div>
+  <div class="footer-bottom"><span>BRAWL &copy; 2026</span><span>Speak your mind. Defend the rest.</span></div>
+</footer>
+
+<script src="js/main.js"></script>
+<script>
+function handleSubmit(e){
+  e.preventDefault();
+  var name = document.getElementById('name').value.trim();
+  var email = document.getElementById('email').value.trim();
+  var handle = document.getElementById('handle').value.trim();
+  var campus = document.getElementById('campus').value;
+  var role = document.getElementById('role').value;
+  var valid = true;
+
+  // Reset errors
+  ['name','email','handle','campus'].forEach(function(f){
+    document.getElementById('error-'+f).classList.remove('show');
+  });
+
+  if(!name || name.length < 2){ document.getElementById('error-name').classList.add('show'); valid=false; }
+  if(!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){ document.getElementById('error-email').classList.add('show'); valid=false; }
+  if(!handle || !/^@[a-zA-Z][a-zA-Z.]{1,19}$/.test(handle)){ document.getElementById('error-handle').classList.add('show'); valid=false; }
+  if(!campus){ document.getElementById('error-campus').classList.add('show'); valid=false; }
+
+  if(!valid) return false;
+
+  // Determine API base URL
+  var API_BASE = '';
+  if(window.location.protocol === 'file:' || window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'){
+    API_BASE = 'http://localhost:3000';
+  }
+
+  var campusName = document.getElementById('campus').options[document.getElementById('campus').selectedIndex].text;
+
+  // Try posting to live API, fall back to local success
+  fetch(API_BASE + '/api/join', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ name: name, email: email, handle: handle, campus: campus, role: role })
+  })
+    .then(function(r){ return r.ok ? r.json() : Promise.reject('API error'); })
+    .then(function(data){
+      var isFounding = data.founding || data.fighter.founding;
+      document.getElementById('successDesc').textContent =
+        'Your fighter profile is live for ' + campusName + '. Founding member: ' + (isFounding ? 'YES' : 'No') +
+        '. We\'ll email ' + email + ' when Brawl launches. See you at 9 PM.';
+      showSuccess();
+    })
+    .catch(function(){
+      // Fallback: local success (no backend running)
+      document.getElementById('successDesc').textContent =
+        'Your fighter profile is queued for ' + campusName + '. We\'ll email ' + email + ' when Brawl launches. See you at 9 PM.';
+      showSuccess();
+    });
+
+  return false;
+}
+
+function showSuccess(){
+  document.getElementById('formContent').style.display = 'none';
+  document.getElementById('successBox').classList.add('show');
+  if(window.Brawl){
+    Brawl.store.set('user',{name:name,email:email,handle:handle,campus:campus});
+  }
+}
+
+// Pre-fill handle from name
+document.getElementById('name').addEventListener('input',function(){
+  var handleField = document.getElementById('handle');
+  if(!handleField.dataset.touched){
+    var name = this.value.trim().toLowerCase().replace(/[^a-z.]/g,'');
+    if(name) handleField.value = '@' + name;
+  }
+});
+document.getElementById('handle').addEventListener('input',function(){
+  this.dataset.touched = '1';
+});
+</script>
+</body>
+</html>

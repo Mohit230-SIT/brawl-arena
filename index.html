@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover">
+<meta name="theme-color" content="#0a0a0f" media="(prefers-color-scheme:dark)">
+<meta name="theme-color" content="#f7f5f2" media="(prefers-color-scheme:light)">
+<meta name="description" content="BRAWL — A nightly live debate arena where two minds enter, one leaves with the clout. Random prompt. Random side. Sixty seconds. No script.">
+<title>BRAWL — Speak your mind. Defend the rest.</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;600;700;800&family=Fragment+Mono:wght@400;500&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+<style>
+.hero{min-height:100vh;min-height:100dvh;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:calc(var(--nav-height) + 40px) var(--section-pad-x) 80px;position:relative}
+.hero-eyebrow{font-family:var(--font-mono);font-size:clamp(10px,2vw,12px);font-weight:500;text-transform:uppercase;letter-spacing:clamp(1.5px,0.5vw,3px);color:var(--text-dim);margin-bottom:clamp(20px,4vw,28px);display:flex;align-items:center;gap:clamp(8px,2vw,12px);animation:fadeUp 0.6s ease-out both;flex-wrap:wrap;justify-content:center}
+.hero-eyebrow::before,.hero-eyebrow::after{content:'';width:clamp(20px,5vw,32px);height:1px;background:var(--border-bright)}
+.hero h1{font-size:clamp(42px,13vw,140px);font-weight:800;line-height:0.9;letter-spacing:clamp(-1px,-0.4vw,-4px);margin-bottom:clamp(16px,3vw,24px);animation:fadeUp 0.7s ease-out 0.1s both}
+.hero h1 .word-attack{color:var(--attack);text-shadow:0 0 clamp(20px,5vw,40px) var(--attack-glow)}
+.hero h1 .word-defend{color:var(--defend);text-shadow:0 0 clamp(20px,5vw,40px) var(--defend-glow)}
+.hero-tagline{font-size:clamp(16px,3vw,26px);color:var(--text-dim);max-width:640px;line-height:1.4;margin-bottom:clamp(24px,4vw,36px);animation:fadeUp 0.7s ease-out 0.2s both}
+.hero-tagline strong{color:var(--text);font-weight:600}
+.hero-actions{animation:fadeUp 0.7s ease-out 0.3s both}
+.hero-ticker{position:absolute;bottom:clamp(16px,3vw,32px);left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:clamp(8px,2vw,16px);font-family:var(--font-mono);font-size:clamp(11px,2vw,12px);color:var(--text-mute);animation:fadeUp 0.8s ease-out 0.5s both;white-space:nowrap}
+.hero-ticker .countdown{color:var(--gold);font-weight:500;letter-spacing:1px}
+.arena-demo{background:var(--surface);border:1px solid var(--border);border-radius:16px;overflow:hidden;margin-top:20px}
+.arena-demo__header{display:flex;align-items:center;justify-content:space-between;padding:14px clamp(16px,3vw,24px);border-bottom:1px solid var(--border);background:var(--surface-2);gap:12px;flex-wrap:wrap}
+.arena-demo__left{display:flex;align-items:center;gap:clamp(8px,2vw,12px);font-family:var(--font-mono);font-size:clamp(11px,2vw,12px);color:var(--text-dim);flex-wrap:wrap}
+.live-badge{background:var(--attack);color:#fff;padding:3px 10px;border-radius:4px;font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;display:flex;align-items:center;gap:6px;flex-shrink:0}
+.live-badge::before{content:'';width:6px;height:6px;background:#fff;border-radius:50%;animation:pulse 1.5s infinite}
+.arena-timer{font-family:var(--font-mono);font-size:clamp(16px,3vw,18px);font-weight:700;color:var(--gold);letter-spacing:1px;flex-shrink:0}
+.arena-prompt-box{padding:clamp(20px,4vw,28px) clamp(16px,3vw,24px);text-align:center;border-bottom:1px solid var(--border);background:color-mix(in srgb,var(--surface) 96%,var(--gold) 4%)}
+.arena-prompt-box__label{font-family:var(--font-mono);font-size:10px;text-transform:uppercase;letter-spacing:2px;color:var(--gold);margin-bottom:10px}
+.arena-prompt-box__text{font-size:clamp(18px,4vw,30px);font-weight:700;line-height:1.25;letter-spacing:-0.5px}
+.arena-fighters{display:grid;grid-template-columns:1fr auto 1fr;gap:0;align-items:stretch}
+.fighter{padding:clamp(20px,4vw,32px) clamp(16px,3vw,24px);display:flex;flex-direction:column;align-items:center;text-align:center;min-width:0}
+.fighter--attack{background:var(--attack-dim);border-right:1px solid var(--border)}
+.fighter--defend{background:var(--defend-dim);border-left:1px solid var(--border)}
+.fighter-role{font-family:var(--font-mono);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:2px;margin-bottom:14px;padding:4px 12px;border-radius:4px;flex-shrink:0}
+.fighter--attack .fighter-role{background:var(--attack);color:#fff}
+.fighter--defend .fighter-role{background:var(--defend);color:#0a0a0f}
+.fighter-avatar{width:clamp(56px,10vw,72px);height:clamp(56px,10vw,72px);border-radius:50%;margin-bottom:14px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:clamp(22px,4vw,28px);border:2px solid var(--border-bright);flex-shrink:0}
+.fighter--attack .fighter-avatar{background:color-mix(in srgb,var(--attack) 30%,var(--surface));color:var(--attack);border-color:var(--attack)}
+.fighter--defend .fighter-avatar{background:color-mix(in srgb,var(--defend) 25%,var(--surface));color:var(--defend);border-color:var(--defend)}
+.fighter-name{font-weight:700;font-size:clamp(14px,2.5vw,16px);margin-bottom:4px}
+.fighter-clout{font-family:var(--font-mono);font-size:clamp(11px,2vw,12px);color:var(--text-dim);margin-bottom:16px}
+.fighter-clout span{color:var(--gold);font-weight:500}
+.fighter-votebar{width:100%;max-width:160px;height:6px;background:var(--border);border-radius:3px;overflow:hidden;margin-bottom:8px}
+.fighter-votebar-fill{height:100%;border-radius:3px;transition:width 0.6s ease}
+.fighter--attack .fighter-votebar-fill{background:var(--attack);width:58%;animation:voteShake 4s ease-in-out infinite}
+.fighter--defend .fighter-votebar-fill{background:var(--defend);width:42%;animation:voteShake 4s ease-in-out 0.5s infinite}
+.fighter-votes{font-family:var(--font-mono);font-size:clamp(12px,2vw,13px);font-weight:600;color:var(--text-dim)}
+.arena-vs{display:flex;align-items:center;justify-content:center;padding:0 clamp(12px,3vw,20px);font-weight:800;font-size:clamp(20px,4vw,28px);color:var(--text-mute);letter-spacing:2px;flex-shrink:0}
+@media(max-width:600px){.arena-fighters{grid-template-columns:1fr}.arena-vs{padding:12px}.fighter--attack{border-right:none;border-bottom:1px solid var(--border)}.fighter--defend{border-left:none;border-top:1px solid var(--border)}}
+.timeline{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:0;margin-top:20px}
+.tl-step{padding:clamp(20px,3vw,28px) clamp(16px,2.5vw,20px);border:1px solid var(--border);border-right:none;background:var(--surface)}
+.tl-step:last-child{border-right:1px solid var(--border)}
+.tl-time{font-family:var(--font-mono);font-size:11px;font-weight:700;color:var(--gold);letter-spacing:1px;margin-bottom:12px}
+.tl-title{font-size:clamp(15px,2.5vw,17px);font-weight:700;margin-bottom:8px;letter-spacing:-0.3px}
+.tl-desc{font-size:clamp(12px,2vw,13px);color:var(--text-dim);line-height:1.55}
+@media(max-width:800px){.timeline{grid-template-columns:1fr 1fr}.tl-step{border-right:1px solid var(--border)}.tl-step:nth-child(2n){border-right:none}.tl-step:nth-child(-n+2){border-bottom:1px solid var(--border)}}
+@media(max-width:500px){.timeline{grid-template-columns:1fr}.tl-step{border-right:1px solid var(--border);border-bottom:none}.tl-step:not(:last-child){border-bottom:1px solid var(--border)}}
+.thesis-section{max-width:820px}
+.thesis-body{font-size:clamp(16px,2.5vw,19px);line-height:1.7;color:var(--text)}
+.thesis-body p{margin-bottom:1.4em}
+.thesis-body .accent{color:var(--attack);font-weight:600}
+.thesis-body .accent-lime{color:var(--defend);font-weight:600}
+.pullquote{margin:clamp(28px,5vw,40px) 0;padding:clamp(20px,4vw,28px);border-left:3px solid var(--gold);font-size:clamp(18px,3.5vw,23px);font-weight:600;line-height:1.35;letter-spacing:-0.3px;color:var(--text)}
+.cta-section{text-align:center;padding:clamp(80px,12vw,140px) var(--section-pad-x);max-width:800px;margin:0 auto}
+.cta-section h2{font-size:clamp(32px,9vw,80px);font-weight:800;line-height:0.95;letter-spacing:clamp(-1px,-0.3vw,-2px);margin-bottom:24px}
+.cta-section h2 .accent-attack{color:var(--attack)}.cta-section h2 .accent-defend{color:var(--defend)}
+.cta-section p{font-size:clamp(15px,2.5vw,18px);color:var(--text-dim);margin-bottom:36px;max-width:520px;margin-left:auto;margin-right:auto}
+</style>
+</head>
+<body>
+<nav>
+  <a href="index.html" class="nav-logo">BRAWL</a>
+  <ul class="nav-links" id="navLinks">
+    <li><a href="index.html" class="active">Home</a></li>
+    <li><a href="arena.html">Arena</a></li>
+    <li><a href="leaderboard.html">Leaderboard</a></li>
+    <li><a href="play.html">How to Play</a></li>
+    <li><a href="about.html">About</a></li>
+  </ul>
+  <a href="join.html" class="nav-cta">Enter the Arena</a>
+  <button class="nav-toggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false"><span></span><span></span><span></span></button>
+</nav>
+
+<div class="hero">
+  <div class="hero-eyebrow"><span class="live-dot"></span>Tonight's Brawl begins at 21:00 IST</div>
+  <h1><span class="word-attack">SPEAK</span><br>YOUR MIND.<br><span class="word-defend">DEFEND</span> THE REST.</h1>
+  <p class="hero-tagline">A nightly live debate arena where <strong>two minds enter, one leaves with the clout.</strong> Random prompt. Random side. Sixty seconds. No script.</p>
+  <div class="hero-actions">
+    <a href="arena.html" class="btn btn-primary">Enter the Arena</a>
+    <a href="#how" class="btn btn-ghost">How It Works</a>
+  </div>
+  <div class="hero-ticker">Next Brawl in <span class="countdown">04:32:18</span></div>
+</div>
+
+<section id="arena-demo-section">
+  <div class="section-label reveal">Live Arena</div>
+  <h2 class="section-title reveal">This is what 9 PM looks like.</h2>
+  <p class="section-lede reveal">Every night, the campus tunes in. Two debaters go live with a prompt they didn't choose and a side they didn't pick. The rest watch, vote, and decide who walks away with the clout.</p>
+  <div class="arena-demo reveal">
+    <div class="arena-demo__header">
+      <div class="arena-demo__left"><span class="live-badge">Live</span><span>Brawl #047 &middot; IIT Bombay</span></div>
+      <div class="arena-timer">00:47</div>
+    </div>
+    <div class="arena-prompt-box">
+      <div class="arena-prompt-box__label">Tonight's Prompt</div>
+      <div class="arena-prompt-box__text">"AI-generated art is not real art."</div>
+    </div>
+    <div class="arena-fighters">
+      <div class="fighter fighter--attack">
+        <div class="fighter-role">Attacker</div>
+        <div class="fighter-avatar">A</div>
+        <div class="fighter-name">Arjun Mehta</div>
+        <div class="fighter-clout">Clout: <span>2,847</span></div>
+        <div class="fighter-votebar"><div class="fighter-votebar-fill"></div></div>
+        <div class="fighter-votes">1,156 votes</div>
+      </div>
+      <div class="arena-vs">VS</div>
+      <div class="fighter fighter--defend">
+        <div class="fighter-role">Defender</div>
+        <div class="fighter-avatar">P</div>
+        <div class="fighter-name">Priya Nair</div>
+        <div class="fighter-clout">Clout: <span>3,102</span></div>
+        <div class="fighter-votebar"><div class="fighter-votebar-fill"></div></div>
+        <div class="fighter-votes">837 votes</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="how">
+  <div class="section-label reveal">The Ritual</div>
+  <h2 class="section-title reveal">Ninety seconds. Every night. Non-negotiable.</h2>
+  <p class="section-lede reveal">9 PM isn't a time &mdash; it's a covenant. The entire campus expects the Brawl the way they expect a match starting.</p>
+  <div class="timeline">
+    <div class="tl-step reveal"><div class="tl-time">21:00:00</div><div class="tl-title">The Drop</div><div class="tl-desc">Prompt and assigned sides push app-wide. Arena opens in 3... 2... 1...</div></div>
+    <div class="tl-step reveal"><div class="tl-time">21:00:03</div><div class="tl-title">The Brawl</div><div class="tl-desc">Both debaters go live. Sixty seconds. No prep, no notes. The campus watches.</div></div>
+    <div class="tl-step reveal"><div class="tl-time">21:01:03</div><div class="tl-title">The Verdict</div><div class="tl-desc">Vote closes. Winner takes clout. Replay clip auto-generated and ready to share.</div></div>
+    <div class="tl-step reveal"><div class="tl-time">21:01:30</div><div class="tl-title">The Seed</div><div class="tl-desc">Tomorrow's prompt teased. FOMO planted. The cycle begins again.</div></div>
+  </div>
+</section>
+
+<section>
+  <div class="section-label reveal">The Mechanics</div>
+  <h2 class="section-title reveal">Why this isn't just another debate app.</h2>
+  <p class="section-lede reveal">Three design decisions separate Brawl from every Q&A forum and debate platform that came before it.</p>
+  <div class="card-grid card-grid--3">
+    <div class="card card--accent-attack reveal">
+      <div class="card__num">01 / THE HOOK</div>
+      <div class="card__title">Zero prep. Three seconds to live.</div>
+      <div class="card__desc">No research time. No tab-opening. No AI-assisted copy-paste. The prompt drops, the camera goes live in three seconds. The unscripted-ness is the training and the entertainment.</div>
+    </div>
+    <div class="card card--accent-gold reveal">
+      <div class="card__num">02 / THE STAKE</div>
+      <div class="card__title">Votes cost clout. Judging isn't free.</div>
+      <div class="card__desc">Each viewer gets one vote per Brawl &mdash; and voting wagers your own clout. Vote for the winner, you gain a point. Vote for the loser, you lose one. The audience is forced to judge the argument.</div>
+    </div>
+    <div class="card card--accent-defend reveal">
+      <div class="card__num">03 / THE FLOOR</div>
+      <div class="card__title">Lose the brawl, not your dignity.</div>
+      <div class="card__desc">Every player has a regenerating base rating and a capped loss per match. The downside is a sting, not an eviction. You want the loser furious enough to come back tomorrow.</div>
+    </div>
+  </div>
+</section>
+
+<section id="thesis" class="thesis-section">
+  <div class="section-label reveal">The Thesis</div>
+  <h2 class="section-title reveal">We're not building a debate app. We're building a status economy.</h2>
+  <div class="thesis-body reveal">
+    <p>On every other platform, clout flows to whoever has the most followers, the best camera, the prettiest feed. <span class="accent-lime">Brawl rewards a single currency that can't be faked:</span> the quality of a mind under pressure, in sixty seconds, with no preparation.</p>
+    <p>The quiet kid in the last row &mdash; the one with no Instagram following &mdash; can dethrone the campus celebrity live, at 9 PM, in front of everyone who matters to them. <span class="accent">Not because they're popular. Because they're sharper.</span></p>
+    <div class="pullquote">Brawl is the first status economy where intellectual courage outranks followers.</div>
+    <p>Every feature decision should be testable against it: does this make sharp thinking win? If yes, keep it. If no, it dies.</p>
+    <p>The campus product is the marketing. The enterprise product &mdash; a B2B communication gym where companies pay to make their employees think and speak clearly under pressure &mdash; is the business.</p>
+  </div>
+</section>
+
+<section id="cta" class="cta-section">
+  <h2 class="reveal"><span class="accent-attack">Two</span> voices.<br><span class="accent-defend">One</span> arena.<br>No script.</h2>
+  <p class="reveal">The Brawl starts at 9 PM. Will you be watching &mdash; or will you be in the arena?</p>
+  <div class="hero-actions reveal">
+    <a href="join.html" class="btn btn-primary">Get Early Access</a>
+    <a href="arena.html" class="btn btn-ghost">Watch a Brawl</a>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-grid">
+    <div><div class="footer-brand">BRAWL</div><p class="footer-tag">Speak your mind. Defend the rest. The first status economy where intellectual courage outranks followers.</p></div>
+    <div class="footer-col"><h4>Platform</h4><a href="arena.html">Arena</a><a href="leaderboard.html">Leaderboard</a><a href="play.html">How to Play</a></div>
+    <div class="footer-col"><h4>Company</h4><a href="about.html">About</a><a href="about.html#vision">Vision</a><a href="join.html">Join</a></div>
+    <div class="footer-col"><h4>Connect</h4><a href="#">Instagram</a><a href="#">Twitter</a><a href="#">LinkedIn</a></div>
+  </div>
+  <div class="footer-bottom"><span>BRAWL &copy; 2026 &middot; Built for the campus, by the campus.</span><span>Speak your mind. Defend the rest.</span></div>
+</footer>
+
+<script src="js/main.js"></script>
+</body>
+</html>

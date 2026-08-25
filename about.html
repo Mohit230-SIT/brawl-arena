@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover">
+<meta name="theme-color" content="#0a0a0f" media="(prefers-color-scheme:dark)">
+<meta name="theme-color" content="#f7f5f2" media="(prefers-color-scheme:light)">
+<title>About — BRAWL</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;600;700;800&family=Fragment+Mono:wght@400;500&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+<style>
+  .vision-section{max-width:820px}
+  .vision-body{font-size:clamp(16px,2.5vw,19px);line-height:1.7;color:var(--text)}
+  .vision-body p{margin-bottom:1.4em}
+  .vision-body .accent{color:var(--attack);font-weight:600}
+  .vision-body .accent-lime{color:var(--defend);font-weight:600}
+  .pullquote{margin:clamp(28px,5vw,40px) 0;padding:clamp(20px,4vw,28px);border-left:3px solid var(--gold);font-size:clamp(18px,3.5vw,23px);font-weight:600;line-height:1.35;letter-spacing:-0.3px;color:var(--text)}
+  .arch-flow{display:grid;grid-template-columns:1fr 1fr;gap:clamp(12px,2vw,20px);margin-top:20px}
+  @media(max-width:800px){.arch-flow{grid-template-columns:1fr}}
+  .arch-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:clamp(20px,3vw,28px)}
+  .arch-card__tag{font-family:var(--font-mono);font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:14px;display:inline-block;padding:4px 10px;border-radius:4px}
+  .arch-card--media .arch-card__tag{background:var(--attack-dim);color:var(--attack)}
+  .arch-card--vote .arch-card__tag{background:var(--defend-dim);color:var(--defend)}
+  .arch-card--prompt .arch-card__tag{background:var(--gold-dim);color:var(--gold)}
+  .arch-card--state .arch-card__tag{background:color-mix(in srgb,var(--text-dim) 20%,transparent);color:var(--text-dim)}
+  .arch-card__title{font-size:clamp(16px,2.5vw,19px);font-weight:700;margin-bottom:8px}
+  .arch-card__desc{font-size:clamp(13px,2vw,14px);color:var(--text-dim);line-height:1.6;margin-bottom:16px}
+  .arch-card__stack{font-family:var(--font-mono);font-size:12px;color:var(--text);line-height:1.8}
+  .arch-card__stack span{display:inline-block;background:var(--surface-2);padding:3px 8px;border-radius:4px;margin:2px 4px 2px 0;border:1px solid var(--border)}
+  .demo-script-box{background:var(--surface);border:1px solid var(--border);border-radius:16px;overflow:hidden;margin-top:20px}
+  .demo-meta{display:flex;align-items:center;gap:clamp(8px,2vw,16px);padding:14px clamp(16px,3vw,24px);background:var(--surface-2);border-bottom:1px solid var(--border);font-family:var(--font-mono);font-size:clamp(11px,2vw,12px);color:var(--text-dim);flex-wrap:wrap}
+  .demo-meta .tag{background:var(--defend-dim);color:var(--defend);padding:3px 8px;border-radius:4px;font-weight:600;font-size:10px;text-transform:uppercase;letter-spacing:1px;flex-shrink:0}
+  .demo-script{padding:clamp(24px,5vw,36px) clamp(20px,4vw,40px);font-size:clamp(15px,2.5vw,17px);line-height:1.75;max-width:680px}
+  .demo-script p{margin-bottom:1.2em}
+  .demo-script .line{color:var(--text-dim);font-style:italic}
+  .demo-script .punch{font-weight:700;color:var(--text);font-style:normal}
+  .demo-script .closer{font-weight:800;font-size:clamp(16px,3vw,19px);letter-spacing:-0.3px;margin-top:1.2em}
+  .demo-footer{padding:14px clamp(16px,3vw,24px);border-top:1px solid var(--border);background:var(--surface-2);font-family:var(--font-mono);font-size:clamp(10px,1.8vw,12px);color:var(--gold);text-align:center;letter-spacing:0.5px;line-height:1.5}
+  .roadmap-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(12px,2vw,20px);margin-top:20px}
+  @media(max-width:800px){.roadmap-grid{grid-template-columns:1fr}}
+  .road-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:clamp(20px,3vw,28px);position:relative}
+  .road-card::before{content:'';position:absolute;top:0;left:clamp(20px,3vw,28px);right:clamp(20px,3vw,28px);height:3px;border-radius:0 0 3px 3px}
+  .road-card--1::before{background:var(--attack)}.road-card--2::before{background:var(--gold)}.road-card--3::before{background:var(--defend)}
+  .road-phase{font-family:var(--font-mono);font-size:11px;color:var(--text-mute);margin-bottom:10px;margin-top:8px;letter-spacing:1px}
+  .road-title{font-size:clamp(17px,3vw,20px);font-weight:700;margin-bottom:8px}
+  .road-desc{font-size:clamp(13px,2vw,14px);color:var(--text-dim);line-height:1.6}
+  .team-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:20px}
+  @media(max-width:700px){.team-grid{grid-template-columns:1fr}}
+  .team-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:24px;text-align:center}
+  .team-avatar{width:64px;height:64px;border-radius:50%;margin:0 auto 14px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:24px}
+  .team-name{font-weight:700;font-size:16px;margin-bottom:4px}
+  .team-role{font-family:var(--font-mono);font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--text-mute);margin-bottom:12px}
+  .team-bio{font-size:13px;color:var(--text-dim);line-height:1.5}
+</style>
+</head>
+<body>
+<nav>
+  <a href="index.html" class="nav-logo">BRAWL</a>
+  <ul class="nav-links" id="navLinks">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="arena.html">Arena</a></li>
+    <li><a href="leaderboard.html">Leaderboard</a></li>
+    <li><a href="play.html">How to Play</a></li>
+    <li><a href="about.html" class="active">About</a></li>
+  </ul>
+  <a href="join.html" class="nav-cta">Enter the Arena</a>
+  <button class="nav-toggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false"><span></span><span></span><span></span></button>
+</nav>
+
+<div class="page-header">
+  <h1>About BRAWL</h1>
+  <p>We're not building a debate app. We're building a status economy where intellectual courage outranks followers.</p>
+</div>
+
+<section id="vision" class="vision-section">
+  <div class="section-label reveal">The Vision</div>
+  <h2 class="section-title reveal">The first status economy where a sharp mind beats a big following.</h2>
+  <div class="vision-body reveal">
+    <p>On every other platform, clout flows to whoever has the most followers, the best camera, the prettiest feed. <span class="accent-lime">Brawl rewards a single currency that can't be faked:</span> the quality of a mind under pressure, in sixty seconds, with no preparation.</p>
+    <p>The quiet kid in the last row &mdash; the one with no Instagram following, no podcast, no personal brand &mdash; can dethrone the campus celebrity live, at 9 PM, in front of everyone who matters to them. <span class="accent">Not because they're popular. Because they're sharper.</span></p>
+    <div class="pullquote">Brawl is the first status economy where intellectual courage outranks followers.</div>
+    <p>The campus product is the marketing. The enterprise product &mdash; a B2B communication gym where companies pay to make their employees think and speak clearly under pressure &mdash; is the business.</p>
+    <p>Every feature decision is testable against one question: does this make sharp thinking win? If yes, keep it. If no, it dies.</p>
+  </div>
+</section>
+
+<section>
+  <div class="section-label reveal">Architecture</div>
+  <h2 class="section-title reveal">Two streams. One socket. One leaderboard.</h2>
+  <p class="section-lede reveal">The entire product is four blocks. A team can prototype it this weekend. Sub-second latency is non-negotiable.</p>
+
+  <div class="arch-flow">
+    <div class="arch-card arch-card--media reveal">
+      <div class="arch-card__tag">Media Layer</div>
+      <div class="arch-card__title">WebRTC &times; 2 &rarr; SFU &rarr; Viewers</div>
+      <div class="arch-card__desc">Two debaters stream via WebRTC peer connections. A Selective Forwarding Unit fans the streams out to hundreds of viewers without mesh networking.</div>
+      <div class="arch-card__stack"><span>WebRTC</span> <span>LiveKit (SFU)</span> <span>STUN/TURN</span></div>
+    </div>
+    <div class="arch-card arch-card--vote reveal">
+      <div class="arch-card__tag">Voting Layer</div>
+      <div class="arch-card__title">WebSocket &rarr; Redis Counter</div>
+      <div class="arch-card__desc">Real-time vote taps stream over WebSocket. A Redis counter aggregates live. One vote per user, enforced server-side.</div>
+      <div class="arch-card__stack"><span>Socket.IO</span> <span>Redis</span> <span>Server-side validation</span></div>
+    </div>
+    <div class="arch-card arch-card--prompt reveal">
+      <div class="arch-card__tag">Prompt Engine</div>
+      <div class="arch-card__title">LLM + Curated Bank + Safety Filter</div>
+      <div class="arch-card__desc">Prompts generated by an LLM from a curated seed bank, filtered for safety. The filter is a feature, not bureaucracy.</div>
+      <div class="arch-card__stack"><span>LLM API</span> <span>Curated seed bank</span> <span>Safety classifier</span></div>
+    </div>
+    <div class="arch-card arch-card--state reveal">
+      <div class="arch-card__tag">State Layer</div>
+      <div class="arch-card__title">Redis Sorted Set &rarr; Postgres &rarr; S3</div>
+      <div class="arch-card__desc">Live campus ranking in a Redis sorted set. Persistent state and match history in Postgres. Replay clips to object storage.</div>
+      <div class="arch-card__stack"><span>Redis ZSET</span> <span>PostgreSQL</span> <span>S3 / object storage</span></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="section-label reveal">The 60-Second Demo</div>
+  <h2 class="section-title reveal">The moment that wins the room.</h2>
+  <p class="section-lede reveal">During the pitch, the CEO draws DEFEND live. Sixty seconds, standing, no notes.</p>
+
+  <div class="demo-script-box reveal">
+    <div class="demo-meta">
+      <span class="tag">Defender</span>
+      <span>Prompt: "Remote work is killing ambition."</span>
+      <span style="margin-left:auto">~58 seconds spoken</span>
+    </div>
+    <div class="demo-script">
+      <p class="line">Sixty seconds. Here's the truth nobody in this room wants to hear: your ambition didn't die on Zoom. It died the day you realized nobody was watching.</p>
+      <p>Office ambition was never ambition. It was <span class="punch">performance</span> &mdash; the early arrival, the loud idea in the standup, the face you made visible. Remote work didn't kill drive. It killed the <span class="punch">audience</span> for your drive, and that terrified you.</p>
+      <p>If your ambition only existed because a manager could see it, that wasn't ambition. That was surveillance responding to incentive.</p>
+      <p>Real ambition doesn't need a witness. The people still rising right now, from their kitchens, at 9 PM &mdash; they're the ones whose fire was never about the room.</p>
+      <p class="closer">Remote work didn't kill ambition. It exposed how many of us never had any.</p>
+    </div>
+    <div class="demo-footer">HOLD EYE CONTACT FOR TWO SECONDS. THEN: "THAT'S A BRAWL. THAT'S THE PRODUCT."</div>
+  </div>
+</section>
+
+<section>
+  <div class="section-label reveal">Roadmap</div>
+  <h2 class="section-title reveal">Campus today. Corporate tomorrow.</h2>
+  <p class="section-lede reveal">The campus product is the marketing. The enterprise product is the business.</p>
+
+  <div class="roadmap-grid">
+    <div class="road-card road-card--1 reveal">
+      <div class="road-phase">PHASE 01 &middot; NOW</div>
+      <div class="road-title">Campus Wedge</div>
+      <div class="road-desc">Launch at a single campus. Nightly 1v1 Brawls. Build the ritual. The leaderboard does the marketing. Every clip is a recruiting ad.</div>
+    </div>
+    <div class="road-card road-card--2 reveal">
+      <div class="road-phase">PHASE 02 &middot; NEXT</div>
+      <div class="road-title">Inter-Campus Leagues</div>
+      <div class="road-desc">Cross-campus Brawls. Team modes (2v2). King of the Hill gauntlets. Regional leaderboards. Sponsorship enters.</div>
+    </div>
+    <div class="road-card road-card--3 reveal">
+      <div class="road-phase">PHASE 03 &middot; THE MONEY</div>
+      <div class="road-title">Enterprise Communication Gym</div>
+      <div class="road-desc">Companies pay fortunes to make employees think and speak clearly under pressure. Brawl becomes a B2B L&D platform.</div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="section-label reveal">The Team</div>
+  <h2 class="section-title reveal">Who's building this.</h2>
+
+  <div class="team-grid">
+    <div class="team-card reveal">
+      <div class="team-avatar" style="background:var(--attack-dim);color:var(--attack)">CEO</div>
+      <div class="team-name">The Pitcher</div>
+      <div class="team-role">CEO &middot; Strategy</div>
+      <div class="team-bio">Runs the live demo. Owns the thesis. Makes sure every feature decision passes the test: does this make sharp thinking win?</div>
+    </div>
+    <div class="team-card reveal">
+      <div class="team-avatar" style="background:var(--gold-dim);color:var(--gold)">CTO</div>
+      <div class="team-name">The Builder</div>
+      <div class="team-role">CTO &middot; Engineering</div>
+      <div class="team-bio">Maps the WebRTC pipeline, stands up the SFU, and ships the weekend prototype. Two streams, one socket, one leaderboard.</div>
+    </div>
+    <div class="team-card reveal">
+      <div class="team-avatar" style="background:var(--defend-dim);color:var(--defend)">CDO</div>
+      <div class="team-name">The Designer</div>
+      <div class="team-role">Design &middot; Product</div>
+      <div class="team-bio">Owns the arena experience. Makes sure the 9 PM drop feels like a match starting, not a notification.</div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-grid">
+    <div><div class="footer-brand">BRAWL</div><p class="footer-tag">Speak your mind. Defend the rest.</p></div>
+    <div class="footer-col"><h4>Platform</h4><a href="arena.html">Arena</a><a href="leaderboard.html">Leaderboard</a><a href="play.html">How to Play</a></div>
+    <div class="footer-col"><h4>Company</h4><a href="about.html">About</a><a href="join.html">Join</a></div>
+    <div class="footer-col"><h4>Connect</h4><a href="#">Instagram</a><a href="#">Twitter</a></div>
+  </div>
+  <div class="footer-bottom"><span>BRAWL &copy; 2026</span><span>Speak your mind. Defend the rest.</span></div>
+</footer>
+
+<script src="js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover">
+<meta name="theme-color" content="#0a0a0f" media="(prefers-color-scheme:dark)">
+<meta name="theme-color" content="#f7f5f2" media="(prefers-color-scheme:light)">
+<title>How to Play — BRAWL</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;600;700;800&family=Fragment+Mono:wght@400;500&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+<style>
+  .steps{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:20px}
+  @media(max-width:700px){.steps{grid-template-columns:1fr}}
+  .step-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:28px;display:flex;gap:20px;align-items:flex-start}
+  .step-num{font-family:var(--font-mono);font-size:28px;font-weight:800;color:var(--attack);flex-shrink:0;line-height:1}
+  .step-body h3{font-size:18px;font-weight:700;margin-bottom:8px}
+  .step-body p{font-size:14px;color:var(--text-dim);line-height:1.6}
+  .scoring-table{background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-top:20px}
+  .modes{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:20px}
+  @media(max-width:700px){.modes{grid-template-columns:1fr}}
+  .mode-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:24px;text-align:center;transition:transform 0.2s}
+  .mode-card:hover{transform:translateY(-3px)}
+  .mode-card__icon{width:56px;height:56px;border-radius:12px;margin:0 auto 16px;display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:800}
+  .mode-card--1 .mode-card__icon{background:var(--attack-dim);color:var(--attack)}
+  .mode-card--2 .mode-card__icon{background:var(--gold-dim);color:var(--gold)}
+  .mode-card--3 .mode-card__icon{background:var(--defend-dim);color:var(--defend)}
+  .mode-card__title{font-size:18px;font-weight:700;margin-bottom:8px}
+  .mode-card__desc{font-size:13px;color:var(--text-dim);line-height:1.6}
+  .mode-card__tag{display:inline-block;font-family:var(--font-mono);font-size:10px;text-transform:uppercase;letter-spacing:1px;padding:3px 8px;border-radius:4px;margin-top:12px}
+  .mode-card--1 .mode-card__tag{background:var(--attack-dim);color:var(--attack)}
+  .mode-card--2 .mode-card__tag{background:var(--gold-dim);color:var(--gold)}
+  .mode-card--3 .mode-card__tag{background:var(--defend-dim);color:var(--defend)}
+  .tips-list{list-style:none;padding:0}
+  .tips-list li{padding:14px 0;border-bottom:1px solid var(--border);display:flex;gap:12px;align-items:flex-start}
+  .tips-list li:last-child{border-bottom:none}
+  .tips-list li::before{content:'';width:6px;height:6px;background:var(--defend);border-radius:50%;flex-shrink:0;margin-top:8px}
+  .tips-list strong{color:var(--text)}
+  .faq-item{border-bottom:1px solid var(--border);padding:20px 0}
+  .faq-item summary{font-weight:700;font-size:16px;cursor:pointer;list-style:none;display:flex;align-items:center;justify-content:space-between}
+  .faq-item summary::after{content:'+';font-size:24px;color:var(--text-dim);transition:transform 0.2s}
+  .faq-item[open] summary::after{transform:rotate(45deg)}
+  .faq-item__answer{padding-top:12px;font-size:14px;color:var(--text-dim);line-height:1.6}
+</style>
+</head>
+<body>
+<nav>
+  <a href="index.html" class="nav-logo">BRAWL</a>
+  <ul class="nav-links" id="navLinks">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="arena.html">Arena</a></li>
+    <li><a href="leaderboard.html">Leaderboard</a></li>
+    <li><a href="play.html" class="active">How to Play</a></li>
+    <li><a href="about.html">About</a></li>
+  </ul>
+  <a href="join.html" class="nav-cta">Enter the Arena</a>
+  <button class="nav-toggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false"><span></span><span></span><span></span></button>
+</nav>
+
+<div class="page-header">
+  <h1>How to Play</h1>
+  <p>Everything you need to enter the arena, fight your corner, and climb the clout board.</p>
+</div>
+
+<section>
+  <div class="section-label reveal">Getting Started</div>
+  <h2 class="section-title reveal">Five steps to your first Brawl.</h2>
+
+  <div class="steps">
+    <div class="step-card reveal"><div class="step-num">01</div><div class="step-body"><h3>Create your fighter profile</h3><p>Sign up with your campus email. Pick a handle. You start with 1,000 clout &mdash; the same as everyone else. No head starts.</p></div></div>
+    <div class="step-card reveal"><div class="step-num">02</div><div class="step-body"><h3>Wait for 9 PM</h3><p>The Brawl drops every night at 21:00 IST. If you're in the queue, you might be selected. The app notifies you three seconds before going live.</p></div></div>
+    <div class="step-card reveal"><div class="step-num">03</div><div class="step-body"><h3>Get your prompt and side</h3><p>The AI assigns a controversial prompt and randomly assigns you to attack or defend it. You don't choose your side. That's the point.</p></div></div>
+    <div class="step-card reveal"><div class="step-num">04</div><div class="step-body"><h3>Fight for 60 seconds</h3><p>Go live. Make your case. No prep, no notes, no tabs. The campus watches and votes in real-time. Every second counts.</p></div></div>
+    <div class="step-card reveal"><div class="step-num">05</div><div class="step-body"><h3>Win or lose clout</h3><p>The fighter with the most votes wins. Winner steals up to 50 clout from the loser. The replay clip is auto-generated and shareable.</p></div></div>
+    <div class="step-card reveal"><div class="step-num">06</div><div class="step-body"><h3>Climb the leaderboard</h3><p>Keep winning. Climb the campus ranks. Qualify for inter-campus tournaments. Your clout is the only currency that matters.</p></div></div>
+  </div>
+</section>
+
+<section>
+  <div class="section-label reveal">Scoring System</div>
+  <h2 class="section-title reveal">How clout works.</h2>
+  <p class="section-lede reveal">Clout is a zero-sum currency. You gain what your opponent loses. But the floor prevents knockout.</p>
+
+  <div class="scoring-table reveal">
+    <table class="data-table">
+      <thead><tr><th>Event</th><th>Clout Change</th><th>Notes</th></tr></thead>
+      <tbody>
+        <tr><td>Win a Brawl</td><td style="color:var(--defend);font-weight:700">+25 to +50</td><td>Scaled by opponent's clout. Beat a higher-ranked fighter, gain more.</td></tr>
+        <tr><td>Lose a Brawl</td><td style="color:var(--attack);font-weight:700">&minus;25 to &minus;50</td><td>Minimum clout floor of 100. You can't go below it.</td></tr>
+        <tr><td>Correct vote (as audience)</td><td style="color:var(--defend)">+2</td><td>Vote for the winner, gain clout. Judging well is rewarded.</td></tr>
+        <tr><td>Incorrect vote (as audience)</td><td style="color:var(--attack)">&minus;1</td><td>Vote for the loser, lose clout. Don't just root for friends.</td></tr>
+        <tr><td>Win streak bonus (3+)</td><td style="color:var(--gold)">+10</td><td>Consecutive wins compound. Risk rises with the streak.</td></tr>
+        <tr><td>Clout regeneration</td><td style="color:var(--text-dim)">+5/day</td><td>Passive regen up to 1,000 base. Encourages coming back.</td></tr>
+        <tr><td>Forfeit / no-show</td><td style="color:var(--attack);font-weight:700">&minus;75</td><td>Severe penalty. The arena doesn't reward cowardice.</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section>
+  <div class="section-label reveal">Game Modes</div>
+  <h2 class="section-title reveal">Pick your fight.</h2>
+
+  <div class="modes">
+    <div class="mode-card mode-card--1 reveal">
+      <div class="mode-card__icon">1v1</div>
+      <div class="mode-card__title">Classic Brawl</div>
+      <div class="mode-card__desc">The flagship mode. One attacker, one defender, sixty seconds. Winner takes clout.</div>
+      <div class="mode-card__tag">Nightly 9 PM</div>
+    </div>
+    <div class="mode-card mode-card--2 reveal">
+      <div class="mode-card__icon">2v2</div>
+      <div class="mode-card__title">Team Brawl</div>
+      <div class="mode-card__desc">Two-person teams. Tag in and out during the 90-second round. Shared clout pool.</div>
+      <div class="mode-card__tag">Weekends</div>
+    </div>
+    <div class="mode-card mode-card--3 reveal">
+      <div class="mode-card__icon">KoH</div>
+      <div class="mode-card__title">King of the Hill</div>
+      <div class="mode-card__desc">One defender holds the arena against a queue of challengers. Each win extends the reign. Lose once, you're out.</div>
+      <div class="mode-card__tag">Special Events</div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="section-label reveal">Strategy</div>
+  <h2 class="section-title reveal">Tips from the top of the board.</h2>
+
+  <div class="card reveal" style="max-width:760px">
+    <ul class="tips-list">
+      <li><div><strong>Hook in the first five seconds.</strong> The first sentence sets the tone. Voters form an impression in under five seconds. Open with a reframe, not an apology.</div></li>
+      <li><div><strong>Don't repeat the prompt.</strong> The audience already heard it. Use those seconds to build your case, not echo the question.</div></li>
+      <li><div><strong>Pick one argument and hammer it.</strong> Sixty seconds can hold one idea well, or three ideas badly. Depth beats breadth every time.</div></li>
+      <li><div><strong>End on a quotable line.</strong> The last sentence is what gets clipped and shared. Make it the one people screenshot.</div></li>
+      <li><div><strong>Acknowledge the strong point, then demolish it.</strong> Strawmanning loses votes. Engaging the best version of the opponent's argument and beating it anyway wins respect.</div></li>
+      <li><div><strong>Watch your opponent's Brawls.</strong> Every replay is public. Study how the top fighters structure their 60 seconds. Patterns repeat.</div></li>
+      <li><div><strong>Vote strategically as an audience member.</strong> You earn clout for correct votes. Judge the argument, not the person. Bias costs you clout.</div></li>
+      <li><div><strong>Don't forfeit. Ever.</strong> The &minus;75 penalty takes three wins to recover. Even a bad Brawl teaches you something. Show up.</div></li>
+    </ul>
+  </div>
+</section>
+
+<section>
+  <div class="section-label reveal">FAQ</div>
+  <h2 class="section-title reveal">Questions we get a lot.</h2>
+
+  <div class="card reveal" style="max-width:760px">
+    <details class="faq-item" open>
+      <summary>Can I choose which side I'm on?</summary>
+      <div class="faq-item__answer">No. The AI randomly assigns you to attack or defend the prompt. This is the core mechanic &mdash; you must be able to argue a position you didn't choose. That's what makes Brawl a communication trainer, not just an opinion echo chamber.</div>
+    </details>
+    <details class="faq-item">
+      <summary>What if I freeze on camera?</summary>
+      <div class="faq-item__answer">It happens. You still get credit for showing up. The replay stays private unless you choose to share it. And the next night's Brawl is a fresh start &mdash; no one remembers yesterday's stumble.</div>
+    </details>
+    <details class="faq-item">
+      <summary>Can my friends vote for me?</summary>
+      <div class="faq-item__answer">They can, but it costs them clout if you lose. The wagering system discourages friend-bias: if your friend gives a weak argument, voting for them out of loyalty loses you clout. The system pushes people to vote honestly.</div>
+    </details>
+    <details class="faq-item">
+      <summary>What happens if I miss my assigned Brawl?</summary>
+      <div class="faq-item__answer">If you're in the queue and get selected but don't show within 3 seconds, it counts as a forfeit (&minus;75 clout). If you know you can't make it, remove yourself from the queue before 9 PM.</div>
+    </details>
+    <details class="faq-item">
+      <summary>Is there an age limit or campus restriction?</summary>
+      <div class="faq-item__answer">Brawl launches campus-first. You need a valid campus email to register for your campus leaderboard. Phase 2 opens inter-campus Brawls. Phase 3 opens the enterprise platform for professionals.</div>
+    </details>
+    <details class="faq-item">
+      <summary>Can I see my old Brawls?</summary>
+      <div class="faq-item__answer">Yes. Every Brawl is recorded and available in your fighter profile. You can mark replays as private or public. Public replays can be shared &mdash; they're your portfolio of live argument.</div>
+    </details>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-grid">
+    <div><div class="footer-brand">BRAWL</div><p class="footer-tag">Speak your mind. Defend the rest.</p></div>
+    <div class="footer-col"><h4>Platform</h4><a href="arena.html">Arena</a><a href="leaderboard.html">Leaderboard</a><a href="play.html">How to Play</a></div>
+    <div class="footer-col"><h4>Company</h4><a href="about.html">About</a><a href="join.html">Join</a></div>
+    <div class="footer-col"><h4>Connect</h4><a href="#">Instagram</a><a href="#">Twitter</a></div>
+  </div>
+  <div class="footer-bottom"><span>BRAWL &copy; 2026</span><span>Speak your mind. Defend the rest.</span></div>
+</footer>
+
+<script src="js/main.js"></script>
+</body>
+</html>

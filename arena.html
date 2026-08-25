@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover">
+<meta name="theme-color" content="#0a0a0f" media="(prefers-color-scheme:dark)">
+<meta name="theme-color" content="#f7f5f2" media="(prefers-color-scheme:light)">
+<title>Arena — BRAWL</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;600;700;800&family=Fragment+Mono:wght@400;500&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+<style>
+  .arena-stage{background:var(--surface);border:1px solid var(--border);border-radius:16px;overflow:hidden;margin-top:20px}
+  .arena-stage__header{display:flex;align-items:center;justify-content:space-between;padding:16px clamp(16px,3vw,24px);background:var(--surface-2);border-bottom:1px solid var(--border);flex-wrap:wrap;gap:12px}
+  .arena-stage__info{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+  .arena-stage__timer{font-family:var(--font-mono);font-size:clamp(24px,6vw,42px);font-weight:800;color:var(--gold);letter-spacing:2px}
+  .arena-stage__timer.danger{color:var(--attack);animation:pulse 0.5s infinite}
+  .arena-prompt{padding:clamp(24px,5vw,40px) clamp(16px,3vw,24px);text-align:center;background:color-mix(in srgb,var(--surface) 94%,var(--gold) 6%);border-bottom:1px solid var(--border)}
+  .arena-prompt__label{font-family:var(--font-mono);font-size:11px;text-transform:uppercase;letter-spacing:2px;color:var(--gold);margin-bottom:12px}
+  .arena-prompt__text{font-size:clamp(22px,5vw,38px);font-weight:800;line-height:1.2;letter-spacing:-1px}
+  .arena-sides{display:grid;grid-template-columns:1fr 1fr;gap:0}
+  .arena-side{padding:clamp(24px,4vw,36px) clamp(16px,3vw,24px);text-align:center;display:flex;flex-direction:column;align-items:center;min-height:200px;justify-content:center}
+  .arena-side--attack{background:var(--attack-dim);border-right:1px solid var(--border)}
+  .arena-side--defend{background:var(--defend-dim);border-left:1px solid var(--border)}
+  .arena-side__role{font-family:var(--font-mono);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:2px;margin-bottom:16px;padding:6px 16px;border-radius:6px}
+  .arena-side--attack .arena-side__role{background:var(--attack);color:#fff}
+  .arena-side--defend .arena-side__role{background:var(--defend);color:#0a0a0f}
+  .arena-side__player{font-size:clamp(16px,3vw,22px);font-weight:700;margin-bottom:8px}
+  .arena-side__clout{font-family:var(--font-mono);font-size:13px;color:var(--text-dim)}
+  .arena-side__clout span{color:var(--gold)}
+  @media(max-width:600px){.arena-sides{grid-template-columns:1fr}.arena-side--attack{border-right:none;border-bottom:1px solid var(--border)}.arena-side--defend{border-left:none;border-top:1px solid var(--border)}}
+  .vote-bar{display:flex;gap:0;height:8px;border-radius:4px;overflow:hidden;margin:24px 0}
+  .vote-bar__attack{background:var(--attack);transition:width 0.5s ease;min-width:2%}
+  .vote-bar__defend{background:var(--defend);transition:width 0.5s ease;min-width:2%}
+  .vote-counts{display:flex;justify-content:space-between;font-family:var(--font-mono);font-size:13px;margin-bottom:20px}
+  .vote-counts span{display:flex;align-items:center;gap:6px}
+  .vote-counts .dot{width:8px;height:8px;border-radius:50%}
+  .vote-counts .dot--attack{background:var(--attack)}
+  .vote-counts .dot--defend{background:var(--defend)}
+  .vote-buttons{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  @media(max-width:500px){.vote-buttons{grid-template-columns:1fr}}
+  .vote-btn{padding:16px 24px;border-radius:8px;border:none;font-family:var(--font-body);font-weight:700;font-size:15px;cursor:pointer;transition:transform 0.15s,opacity 0.15s;min-height:48px;display:flex;align-items:center;justify-content:center;gap:8px}
+  .vote-btn:disabled{opacity:0.4;cursor:not-allowed}
+  .vote-btn:active{transform:scale(0.97)}
+  .vote-btn--attack{background:var(--attack);color:#fff}
+  .vote-btn--defend{background:var(--defend);color:#0a0a0f}
+  .result-banner{padding:clamp(24px,4vw,36px);text-align:center;border-radius:12px;margin:20px 0;display:none}
+  .result-banner.show{display:block;animation:fadeUp 0.5s ease-out}
+  .result-banner--win{background:var(--gold-dim);border:1px solid var(--gold)}
+  .result-banner__title{font-size:clamp(20px,4vw,28px);font-weight:800;margin-bottom:8px}
+  .result-banner__desc{font-size:14px;color:var(--text-dim)}
+  .prompt-gen{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin-top:20px}
+  .stat-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:24px}
+  @media(max-width:600px){.stat-row{grid-template-columns:1fr 1fr}}
+  .stat-box{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:16px;text-align:center}
+  .stat-box__value{font-size:clamp(20px,4vw,28px);font-weight:800;color:var(--gold);font-family:var(--font-mono)}
+  .stat-box__label{font-family:var(--font-mono);font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--text-mute);margin-top:4px}
+</style>
+</head>
+<body>
+<nav>
+  <a href="index.html" class="nav-logo">BRAWL</a>
+  <ul class="nav-links" id="navLinks">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="arena.html" class="active">Arena</a></li>
+    <li><a href="leaderboard.html">Leaderboard</a></li>
+    <li><a href="play.html">How to Play</a></li>
+    <li><a href="about.html">About</a></li>
+  </ul>
+  <a href="join.html" class="nav-cta">Enter the Arena</a>
+  <button class="nav-toggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false"><span></span><span></span><span></span></button>
+</nav>
+
+<div class="page-header">
+  <h1>The Arena</h1>
+  <p>Experience a live Brawl. Generate a prompt, assign sides, start the 60-second timer, and cast your vote.</p>
+</div>
+
+<section>
+  <div class="section-label reveal">Interactive Simulator</div>
+  <h2 class="section-title reveal">Tonight's Brawl</h2>
+
+  <div class="arena-stage reveal">
+    <div class="arena-stage__header">
+      <div class="arena-stage__info">
+        <span class="live-badge">Live</span>
+        <span style="font-family:var(--font-mono);font-size:12px;color:var(--text-dim)">Brawl #<span id="brawlNum">048</span> &middot; Campus Arena</span>
+      </div>
+      <div class="arena-stage__timer" id="timerDisplay">00:60</div>
+    </div>
+
+    <div class="arena-prompt">
+      <div class="arena-prompt__label">Tonight's Prompt</div>
+      <div class="arena-prompt__text" id="promptText">"AI-generated art is not real art."</div>
+    </div>
+
+    <div class="arena-sides">
+      <div class="arena-side arena-side--attack">
+        <div class="arena-side__role">Attacker</div>
+        <div class="arena-side__player" id="attackerName">Arjun Mehta</div>
+        <div class="arena-side__clout">Clout: <span id="attackerClout">2,847</span></div>
+      </div>
+      <div class="arena-side arena-side--defend">
+        <div class="arena-side__role">Defender</div>
+        <div class="arena-side__player" id="defenderName">Priya Nair</div>
+        <div class="arena-side__clout">Clout: <span id="defenderClout">3,102</span></div>
+      </div>
+    </div>
+
+    <div style="padding:clamp(20px,4vw,32px) clamp(16px,3vw,24px)">
+      <div class="vote-bar">
+        <div class="vote-bar__attack" id="voteBarAttack" style="width:50%"></div>
+        <div class="vote-bar__defend" id="voteBarDefend" style="width:50%"></div>
+      </div>
+      <div class="vote-counts">
+        <span><span class="dot dot--attack"></span> Attacker: <span id="attackVotes">0</span></span>
+        <span><span class="dot dot--defend"></span> Defender: <span id="defendVotes">0</span></span>
+      </div>
+
+      <div class="vote-buttons">
+        <button class="vote-btn vote-btn--attack" id="voteAttack" onclick="castVote('attack')">
+          Vote Attacker
+        </button>
+        <button class="vote-btn vote-btn--defend" id="voteDefend" onclick="castVote('defend')">
+          Vote Defender
+        </button>
+      </div>
+
+      <div class="result-banner" id="resultBanner">
+        <div class="result-banner__title" id="resultTitle"></div>
+        <div class="result-banner__desc" id="resultDesc"></div>
+      </div>
+
+      <div class="prompt-gen">
+        <button class="btn btn-primary" onclick="generatePrompt()">New Prompt</button>
+        <button class="btn btn-ghost" onclick="startBrawl()">Start 60s Timer</button>
+        <button class="btn btn-gold" onclick="resetArena()">Reset Arena</button>
+      </div>
+
+      <div class="stat-row">
+        <div class="stat-box"><div class="stat-box__value" id="totalVotes">0</div><div class="stat-box__label">Total Votes</div></div>
+        <div class="stat-box"><div class="stat-box__value" id="leadingSide">Tie</div><div class="stat-box__label">Leading</div></div>
+        <div class="stat-box"><div class="stat-box__value" id="cloutAtStake">+50</div><div class="stat-box__label">Clout at Stake</div></div>
+        <div class="stat-box"><div class="stat-box__value" id="viewers">847</div><div class="stat-box__label">Watching</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="callout" style="margin-top:24px">
+    <div class="callout__title" style="color:var(--gold)">Demo Mode</div>
+    This is a simulation of the live Brawl experience. In production, this page connects via WebRTC for real-time video and WebSocket for live voting. Try generating new prompts and casting votes to see how the arena works.
+  </div>
+</section>
+
+<footer>
+  <div class="footer-grid">
+    <div><div class="footer-brand">BRAWL</div><p class="footer-tag">Speak your mind. Defend the rest.</p></div>
+    <div class="footer-col"><h4>Platform</h4><a href="arena.html">Arena</a><a href="leaderboard.html">Leaderboard</a><a href="play.html">How to Play</a></div>
+    <div class="footer-col"><h4>Company</h4><a href="about.html">About</a><a href="join.html">Join</a></div>
+    <div class="footer-col"><h4>Connect</h4><a href="#">Instagram</a><a href="#">Twitter</a></div>
+  </div>
+  <div class="footer-bottom"><span>BRAWL &copy; 2026</span><span>Speak your mind. Defend the rest.</span></div>
+</footer>
+
+<script src="js/main.js"></script>
+<script>
+var PROMPTS = [
+  "AI-generated art is not real art.",
+  "A 4-day work week will destroy the Indian economy.",
+  "Prompt engineering is a fake job.",
+  "Social media has done more harm than good for democracy.",
+  "Remote work is killing ambition.",
+  "College degrees will be obsolete in 10 years.",
+  "AI should have the right to refuse harmful tasks.",
+  "Cancel culture is a force for good.",
+  "Coding will be a blue-collar job within 15 years.",
+  "Universal Basic Income is inevitable.",
+  "Mandatory voting would strengthen democracy.",
+  "Tech companies should be treated like utilities.",
+  "Traditional education kills creativity.",
+  "Data privacy is an illusion.",
+  "Anonymity on the internet does more harm than good."
+];
+
+var FIGHTERS = [
+  {name:"Arjun Mehta",clout:2847},{name:"Priya Nair",clout:3102},
+  {name:"Karthik Reddy",clout:3650},{name:"Sneha Iyer",clout:2980},
+  {name:"Dev Patel",clout:2410},{name:"Ananya Singh",clout:3200},
+  {name:"Rohan Verma",clout:2750},{name:"Meera Joshi",clout:3010},
+  {name:"Vikram Rao",clout:2620},{name:"Ishita Gupta",clout:3380}
+];
+
+var state = {attackVotes:0,defendVotes:0,timer:60,timerInterval:null,hasVoted:false,brawlNum:48,viewers:847};
+
+// API base — auto-detect if backend is running
+var API_BASE = '';
+function getApiBase(){
+  // If hosted on Render/Heroku, API is same domain
+  // If opening locally, try localhost:3000
+  if(window.location.protocol === 'file:' || window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'){
+    API_BASE = 'http://localhost:3000';
+  }
+  return API_BASE;
+}
+
+function generatePrompt(){
+  // Try live API first, fall back to local prompts
+  fetch(getApiBase() + '/api/prompts/random')
+    .then(function(r){ return r.ok ? r.json() : Promise.reject('API not available'); })
+    .then(function(data){
+      document.getElementById('promptText').textContent = '"' + data.prompt + '"';
+      resetVotes();
+    })
+    .catch(function(){
+      // Fallback to local prompts if API is not running
+      var p = PROMPTS[Math.floor(Math.random()*PROMPTS.length)];
+      document.getElementById('promptText').textContent = '"' + p + '"';
+      resetVotes();
+    });
+}
+
+function shuffleFighters(){
+  var a = FIGHTERS[Math.floor(Math.random()*FIGHTERS.length)];
+  var d = FIGHTERS[Math.floor(Math.random()*FIGHTERS.length)];
+  while(d.name===a.name) d = FIGHTERS[Math.floor(Math.random()*FIGHTERS.length)];
+  document.getElementById('attackerName').textContent = a.name;
+  document.getElementById('attackerClout').textContent = a.clout.toLocaleString('en-IN');
+  document.getElementById('defenderName').textContent = d.name;
+  document.getElementById('defenderClout').textContent = d.clout.toLocaleString('en-IN');
+}
+
+function startBrawl(){
+  if(state.timerInterval) return;
+  resetVotes();
+  state.timer = 60;
+  state.hasVoted = false;
+  updateTimerDisplay();
+  document.getElementById('resultBanner').classList.remove('show');
+
+  state.timerInterval = setInterval(function(){
+    state.timer--;
+    updateTimerDisplay();
+    // Simulate incoming votes
+    state.attackVotes += Math.floor(Math.random()*3);
+    state.defendVotes += Math.floor(Math.random()*3);
+    state.viewers += Math.floor(Math.random()*5)-1;
+    updateVotes();
+    if(state.timer<=0){
+      clearInterval(state.timerInterval);
+      state.timerInterval = null;
+      endBrawl();
+    }
+  },1000);
+}
+
+function updateTimerDisplay(){
+  var el = document.getElementById('timerDisplay');
+  el.textContent = '00:' + String(state.timer).padStart(2,'0');
+  if(state.timer<=10){ el.classList.add('danger'); } else { el.classList.remove('danger'); }
+}
+
+function castVote(side){
+  if(state.hasVoted) return;
+  state.hasVoted = true;
+  if(side==='attack') state.attackVotes++;
+  else state.defendVotes++;
+  updateVotes();
+  document.getElementById('voteAttack').disabled = true;
+  document.getElementById('voteDefend').disabled = true;
+}
+
+function updateVotes(){
+  document.getElementById('attackVotes').textContent = state.attackVotes;
+  document.getElementById('defendVotes').textContent = state.defendVotes;
+  document.getElementById('totalVotes').textContent = state.attackVotes + state.defendVotes;
+  document.getElementById('viewers').textContent = state.viewers;
+  var total = state.attackVotes + state.defendVotes || 1;
+  var aPct = Math.round((state.attackVotes/total)*100);
+  var dPct = 100 - aPct;
+  document.getElementById('voteBarAttack').style.width = aPct + '%';
+  document.getElementById('voteBarDefend').style.width = dPct + '%';
+  document.getElementById('leadingSide').textContent = state.attackVotes>state.defendVotes ? 'Attacker' : state.defendVotes>state.attackVotes ? 'Defender' : 'Tie';
+}
+
+function endBrawl(){
+  var winner = state.attackVotes > state.defendVotes ? 'attack' : state.defendVotes > state.attackVotes ? 'defend' : 'tie';
+  var banner = document.getElementById('resultBanner');
+  var title = document.getElementById('resultTitle');
+  var desc = document.getElementById('resultDesc');
+  if(winner==='attack'){
+    title.textContent = 'Attacker Wins!';
+    desc.textContent = 'Clout transferred to the attacker. The defender loses 50 clout points.';
+    banner.className = 'result-banner result-banner--win show';
+  } else if(winner==='defend'){
+    title.textContent = 'Defender Wins!';
+    desc.textContent = 'Clout transferred to the defender. The attacker loses 50 clout points.';
+    banner.className = 'result-banner result-banner--win show';
+  } else {
+    title.textContent = "It's a Tie!";
+    desc.textContent = 'No clout exchanged. Both fighters live to brawl another night.';
+    banner.className = 'result-banner show';
+  }
+  document.getElementById('voteAttack').disabled = true;
+  document.getElementById('voteDefend').disabled = true;
+}
+
+function resetVotes(){
+  state.attackVotes = 0;
+  state.defendVotes = 0;
+  state.hasVoted = false;
+  state.viewers = 800 + Math.floor(Math.random()*100);
+  document.getElementById('voteAttack').disabled = false;
+  document.getElementById('voteDefend').disabled = false;
+  document.getElementById('resultBanner').classList.remove('show');
+  updateVotes();
+}
+
+function resetArena(){
+  if(state.timerInterval){ clearInterval(state.timerInterval); state.timerInterval = null; }
+  state.timer = 60;
+  updateTimerDisplay();
+  shuffleFighters();
+  generatePrompt();
+  resetVotes();
+}
+
+// Init
+shuffleFighters();
+</script>
+</body>
+</html>
