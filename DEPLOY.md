@@ -1,140 +1,128 @@
-# How to Deploy BRAWL (Get a Live URL Anyone Can Visit)
+# How to Deploy BRAWL with a Database
 
-You have two options. **Option A is the easiest** — everything on one server.
+This version has **real database support**. Data survives server restarts.
 
 ---
 
-## Option A: Render.com (Recommended — Frontend + Backend Together)
+## What Changed
 
-This deploys the entire app (all HTML pages + Node.js backend) as one service on a free URL like `https://brawl-arena.onrender.com`.
+The backend now uses **PostgreSQL** in production (on Render) and **JSON file storage** locally. When someone joins through the form, their data is saved to the database — permanently. When a brawl ends, clout is updated in the database. Restart the server, everything is still there.
 
-### Step 1: Create a GitHub Repository
+---
 
-1. Go to [github.com](https://github.com) and sign in
-2. Click the **+** icon (top right) → **New repository**
-3. Name it `brawl-arena`
-4. Set to **Public**
-5. Click **Create repository**
-6. Click **uploading an existing file** (or drag-and-drop all files from the `brawl-website` folder)
-7. Upload ALL files from the `brawl-website` folder (the HTML files, css/, js/, backend/, package.json, etc.)
-8. Click **Commit changes**
+## Option A: Render.com (Recommended — Free Database + Free Server)
 
-### Step 2: Deploy on Render
+### Step 1: Upload to GitHub
 
-1. Go to [render.com](https://render.com) and sign up (use the **GitHub** button to sign in)
-2. Click **New +** → **Web Service**
-3. Click **Connect** next to your `brawl-arena` repository
-4. Fill in:
-   - **Name**: `brawl-arena` (or any name)
-   - **Runtime**: Node (auto-detected)
+1. Unzip `BRAWL-Database-Edition.zip`
+2. Go to github.com → New repository → name it `brawl-arena` → Public → Create
+3. Upload ALL files from the unzipped folder (use GitHub Desktop if drag-drop doesn't work for folders)
+4. Commit changes
+
+### Step 2: Create a Free PostgreSQL Database on Render
+
+1. Go to [render.com](https://render.com) → Sign up with GitHub
+2. Click **New +** → **PostgreSQL**
+3. Name it: `brawl-db`
+4. Plan: **Free**
+5. Click **Create Database**
+6. Wait 1-2 minutes for it to provision
+7. On the database page, find the **Connection String** (starts with `postgresql://...`)
+8. Copy it — you'll need it in Step 3
+
+### Step 3: Deploy the Web Server on Render
+
+1. On Render, click **New +** → **Web Service**
+2. Connect your `brawl-arena` GitHub repository
+3. Fill in:
+   - **Name**: `brawl-arena`
    - **Build Command**: `npm install`
    - **Start Command**: `node backend/server.js`
    - **Plan**: Free
-5. Click **Create Web Service**
-6. Wait 2-3 minutes for it to build and deploy
+4. Scroll down to **Environment Variables**
+5. Click **Add Environment Variable**:
+   - **Key**: `DATABASE_URL`
+   - **Value**: paste the PostgreSQL connection string from Step 2
+6. Click **Create Web Service**
+7. Wait 2-3 minutes for build and deploy
 
-### Step 3: Get Your Live URL
+### Step 4: Test It
 
-Render gives you a URL like:
+Visit your live URL:
 ```
 https://brawl-arena.onrender.com
 ```
 
-That's it! Share this URL with anyone. They visit it and get:
-- The full website (all 6 pages)
-- The working API (`/api/health`, `/api/leaderboard`, `/api/prompts/random`, etc.)
-- The join form actually saves to the server
-- The arena page fetches prompts from the live API
-
-**Test it:**
+Test the API:
 ```
 https://brawl-arena.onrender.com/api/health
-→ {"status":"ok","fighters":10,"uptime":...}
-
-https://brawl-arena.onrender.com/api/prompts/random
-→ {"prompt":"AI art is not real art.","side":"attack"}
+→ {"status":"ok","db":"postgresql","fighters":10,"uptime":...}
 
 https://brawl-arena.onrender.com/api/leaderboard
 → {"leaderboard":[...],"total":10}
 ```
 
-### Important Notes for Render Free Tier
-- The server goes to sleep after 15 minutes of inactivity. The first visit after sleep takes ~30 seconds to wake up. Subsequent visits are instant.
-- To keep it awake during your presentation, just visit the URL a minute before you present.
-
----
-
-## Option B: Run Locally (For Development/Testing)
-
-If you want to run everything on your own laptop:
-
-### Prerequisites
-- Install [Node.js](https://nodejs.org) (version 18 or higher)
-
-### Steps
-```bash
-# 1. Navigate to the project folder
-cd brawl-website
-
-# 2. Install dependencies
-npm install
-
-# 3. Start the server
-npm start
-
-# 4. Open in browser
-# Visit http://localhost:3000
+Now go to the website, fill in the Join form, and submit. Then visit:
+```
+https://brawl-arena.onrender.com/api/fighters
 ```
 
-Both the frontend and backend now run on `http://localhost:3000`. The arena page fetches live prompts from the API, the join form posts to the server, and the leaderboard data comes from the backend.
+You'll see your new fighter saved in the database. Restart the server — data is still there.
 
 ---
 
-## What Works After Deployment
+## Option B: Run Locally with Database
 
-| Feature | Without Backend (just open HTML) | With Backend (deployed) |
-|---------|----------------------------------|------------------------|
-| All 6 pages display | YES | YES |
-| Arena timer & voting | Simulated locally | Live API prompts |
-| Join form | Saves to browser only | Saves to server, shows founding status |
-| Leaderboard | Static demo data | Live from API, updates when people join |
-| API endpoints | Not available | All 8 endpoints live |
-| WebSocket voting | Not available | Real-time vote updates |
-| Shareable URL | No (local file only) | Yes (public URL) |
+If you want to run locally without installing PostgreSQL, the server automatically uses JSON file storage:
+
+```bash
+cd brawl-website
+npm install
+npm start
+```
+
+Visit `http://localhost:3000`. When someone joins, their data is saved to `backend/data.json`. Restart the server — data is still there.
+
+---
+
+## How Data Persistence Works
+
+| Environment | Database | How It Works |
+|-------------|----------|-------------|
+| Local (no DATABASE_URL) | JSON file (`backend/data.json`) | Data saved to a file on disk. Survives restarts. |
+| Render (DATABASE_URL set) | PostgreSQL | Data saved to a real database. Survives restarts, scaling, everything. |
+
+The server automatically detects which to use. No code changes needed.
+
+---
+
+## API Endpoints
+
+All endpoints work the same regardless of database type:
+
+| Method | Path | Description |
+|--------|------|-------------|
+| GET | `/api/health` | Server health + database type + fighter count |
+| GET | `/api/prompts/random` | Random debate prompt + assigned side |
+| GET | `/api/leaderboard?sort=clout&campus=iitb` | Ranked fighters (filterable) |
+| GET | `/api/fighters` | All registered fighters |
+| POST | `/api/join` | Register new fighter (saved to DB) |
+| POST | `/api/brawl/start` | Create a new brawl session |
+| POST | `/api/vote` | Cast a vote |
+| POST | `/api/brawl/end` | End brawl, update clout in DB |
 
 ---
 
 ## Troubleshooting
 
-**Build fails on Render:**
-- Make sure `package.json` is in the ROOT of the repository (not inside a subfolder)
-- Make sure the build command is exactly: `npm install`
-- Make sure the start command is exactly: `node backend/server.js`
+**"pg module not found" on Render:**
+Make sure `package.json` in the root has `"pg": "^8.11.3"` in dependencies. Run `npm install` on Render.
 
-**Page loads but API returns 404:**
-- The backend server.js must be at `backend/server.js` relative to the repo root
-- Check that `backend/server.js` has `app.use(express.static(__dirname))` — wait, it should be `express.static(__dirname + '/..')` to serve from root... Actually, the server uses `__dirname` which points to `backend/`. We need to fix this.
+**Database connection fails:**
+Make sure you copied the full connection string including `postgresql://` prefix. Make sure the environment variable is named exactly `DATABASE_URL`.
 
-**Actually, the server is already configured to serve files from the parent directory.** If you see the API working but the HTML pages not loading, change the static path in `backend/server.js`:
+**Data resets on restart:**
+You're running locally without PostgreSQL. The JSON file should persist. Check that `backend/data.json` exists and has data. If using Render, make sure `DATABASE_URL` is set as an environment variable.
 
-```js
-// Change this line:
-app.use(express.static(__dirname));
-// To:
-app.use(express.static(path.join(__dirname, '..')));
-```
-
-This makes the server serve HTML files from the project root, while the backend code lives in `backend/`.
-
----
-
-## Quick Summary
-
-1. Upload all files to GitHub
-2. Connect repo to Render.com
-3. Build: `npm install`
-4. Start: `node backend/server.js`
-5. Get URL: `https://yourname.onrender.com`
-6. Share with anyone
-
-Done. Full working website with live backend.
+**Render free tier sleeps:**
+The server sleeps after 15 minutes of inactivity. The database does NOT sleep — data is always saved. Visit the URL 1 minute before your presentation to wake the server.
